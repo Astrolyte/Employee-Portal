@@ -40,6 +40,23 @@ function SignupForm() {
     try {
     } catch (error) {}
   };
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        setError("Please select a valid image file");
+        return;
+      }
+      // Validate file size (e.g., max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setError("Image size should be less than 5MB");
+        return;
+      }
+      setProfilePhoto(file);
+      setError(""); // Clear any previous errors
+    }
+  };
   return (
     <AuthLayout>
       <div className="w-full lg:w-[70%] h-auto md:h-full mt-10 md:mt-0 flex flex-col justify-center ">
@@ -50,18 +67,24 @@ function SignupForm() {
         <form onSubmit={handleSignup} className="space-y-5">
           <AuthInput
             value={name}
-            onChange={(e) => setFirstName(e.target.value)}
+            onChange={(e) => setName(e.target.value)}
             label="Name"
             placeholder="john"
             type="text"
           />
-          <AuthInput
-            value={profilePhoto}
-            onChange={(e) => setProfilePhoto(e.target.value)}
-            label="Upload your Profile Photo"
-            placeholder=""
-            type="file"
-          />
+          <div className="flex flex-col">
+            <label className="text-sm font-medium text-black mb-2">
+              Upload your Profile Photo
+            </label>
+            <div className="border border-gray-300 rounded-lg">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 file:cursor-pointer cursor-pointer"
+              />
+            </div>
+          </div>
           <AuthInput
             value={dateOfBirth}
             onChange={(e) => setDOB(e.target.value)}
