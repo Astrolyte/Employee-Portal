@@ -38,23 +38,24 @@ function SignupForm() {
 
     //api call for Signup
     try {
-    } catch (error) {}
+
+    } catch (error) {
+      
+    }
   };
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Validate file type
       if (!file.type.startsWith('image/')) {
         setError("Please select a valid image file");
         return;
       }
-      // Validate file size (e.g., max 5MB)
       if (file.size > 5 * 1024 * 1024) {
         setError("Image size should be less than 5MB");
         return;
       }
       setProfilePhoto(file);
-      setError(""); // Clear any previous errors
+      setError(""); 
     }
   };
   return (
