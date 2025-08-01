@@ -1,8 +1,8 @@
-import mongoose,{schema} from "mongoose";
+import mongoose,{Schema} from "mongoose";
 import jwt from "jsonwebtoken"
 import bcrypt from "bcryptjs"
 
-const userSchema = new schema(
+const userSchema = new Schema(
     {
         Name:{
             type:String,
@@ -45,7 +45,7 @@ userSchema.pre("save",async function(next){
 })
 
 //compare passwords
-userSchema.methods.isPasswordCorect = async function(password){
+userSchema.methods.isPasswordCorrect = async function(password){
     return await bcrypt.compare(password,this.password);
 }
 userSchema.methods.generateAccessToken = function(){
