@@ -1,8 +1,9 @@
 import React from "react";
 import { useState } from "react";
-import AuthLayout from "../../components/layout/AuthLayout";
-import AuthInput from "../../components/Input/AuthInput";
-import { validateEmail, validatePassword } from "../../utils/helper";
+import AuthLayout from "../../components/layout/AuthLayout.jsx";
+import AuthInput from "../../components/Input/AuthInput.jsx";
+import { validateEmail, validatePassword } from "../../utils/helper.js";
+import axiosInstance from "../../utils/axiosInstance.js";
 function SignupForm() {
   const [name, setName] = useState("");
   const [profilePhoto, setProfilePhoto] = useState("");
@@ -12,7 +13,7 @@ function SignupForm() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState(false);
 
-  const handleSignup = (e) => {
+  const handleSignup = async(e) => {
     e.preventDefault();
 
     if (!validateEmail(email)) {
@@ -38,10 +39,19 @@ function SignupForm() {
 
     //api call for Signup
     try {
-
-    } catch (error) {
-      
-    }
+        const res = await axiosInstance.post("/api/v1/users/register",{
+          email,
+          password,
+        });
+        if(res.status === 200){
+          console.log("Login success:",res.data);
+          navigate("/dashboard");
+        }
+      } catch (error) {
+        const msg = err?.response?.data?.message || "Login failed. Try again.";
+        setError(msg);
+        console.error("Login error:", msg);
+      }
   };
   const handleFileChange = (e) => {
     const file = e.target.files[0];

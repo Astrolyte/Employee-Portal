@@ -1,8 +1,6 @@
 import { asyncHandler } from "../utils/AsyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/user.models.js";
-import jwt from "jsonwebtoken";
-import mongoose from "mongoose";
 import { uploadOnCloudinary } from "../utils/uploadOnCloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
@@ -97,7 +95,24 @@ const loginUser = asyncHandler(async(req,res)=>{
           )
         )
 })
+const getUserInfo = asyncHandler(async(req,res)=>{
+  const user = await User.findById(req.user._id).select("-password");
+
+  if(!user){
+    throw new ApiError(404,"User not found");
+  }
+  const userInfo = {
+    ...user.toObject(),
+    totalPollsCreated: 0,
+    totalPollsVotes:0,
+    totalIdeasCreated: 0,
+    totalIdeasVoted: 0,
+  }
+  
+  return res.status(201).json(new ApiResponse(201, "User fetched successfully", userInfo));
+})
 export {
   registerUser,
-  loginUser
+  loginUser,
+  getUserInfo
 }

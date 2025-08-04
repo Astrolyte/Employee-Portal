@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
-import AuthLayout from '../../components/layout/AuthLayout'
+import AuthLayout from '../../components/layout/AuthLayout.jsx'
 import {Link, useNavigate} from "react-router-dom"
-import AuthInput from '../../components/Input/AuthInput'
-import { validateEmail } from '../../utils/helper'
+import AuthInput from '../../components/Input/AuthInput.jsx'
+import { validateEmail } from '../../utils/helper.js'
+import axiosInstance from '../../utils/axiosInstance.js'
 function LoginForm() {
 
   const [email,setEmail] = useState("")
@@ -25,9 +26,18 @@ function LoginForm() {
 
       //Login API
       try {
-        
+        const res = await axiosInstance.post("/api/v1/users/login",{
+          email,
+          password,
+        });
+        if(res.status === 200){
+          console.log("Login success:",res.data);
+          navigate("/dashboard");
+        }
       } catch (error) {
-        
+        const msg = err?.response?.data?.message || "Login failed. Try again.";
+        setError(msg);
+        console.error("Login error:", msg);
       }
   }
   return (
