@@ -4,6 +4,7 @@ import {Link, useNavigate} from "react-router-dom"
 import AuthInput from '../../components/Input/AuthInput.jsx'
 import { validateEmail } from '../../utils/helper.js'
 import axiosInstance from '../../utils/axiosInstance.js'
+import { API_PATHS } from "../../utils/apiPaths.js"
 function LoginForm() {
 
   const [email,setEmail] = useState("")
@@ -26,7 +27,7 @@ function LoginForm() {
 
       //Login API
       try {
-        const res = await axiosInstance.post("/api/v1/users/login",{
+        const res = await axiosInstance.post(API_PATHS.AUTH.LOGIN,{
           email,
           password,
         });

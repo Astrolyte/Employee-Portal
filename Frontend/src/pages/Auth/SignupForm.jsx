@@ -4,6 +4,8 @@ import AuthLayout from "../../components/layout/AuthLayout.jsx";
 import AuthInput from "../../components/Input/AuthInput.jsx";
 import { validateEmail, validatePassword } from "../../utils/helper.js";
 import axiosInstance from "../../utils/axiosInstance.js";
+import { API_PATHS } from "../../utils/apiPaths.js"
+import { useNavigate } from "react-router-dom";
 function SignupForm() {
   const [name, setName] = useState("");
   const [profilePhoto, setProfilePhoto] = useState("");
@@ -13,6 +15,7 @@ function SignupForm() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState(false);
 
+  const navigate = useNavigate();
   const handleSignup = async(e) => {
     e.preventDefault();
 
@@ -39,18 +42,30 @@ function SignupForm() {
 
     //api call for Signup
     try {
-        const res = await axiosInstance.post("/api/v1/users/register",{
-          email,
-          password,
-        });
-        if(res.status === 200){
-          console.log("Login success:",res.data);
+        const formdata = new FormData();
+        formdata.append('Name', name);
+        formdata.append('DOB', dateOfBirth);
+        formdata.append('email',email);
+        formdata.append('password',password);
+        formdata.append('avatar',profilePhoto);
+
+        const res = await axiosInstance.post(
+          API_PATHS.AUTH.REGISTER,
+          formdata,
+          {
+          headers:{
+            "Content-Type":"multipart/form-data"
+          },
+          withCredentials: true
+        })
+        if(res.status == 201){
+          console.log("Signup Sucess:",res.data);
           navigate("/dashboard");
         }
-      } catch (error) {
-        const msg = err?.response?.data?.message || "Login failed. Try again.";
+      } catch (err) {
+        const msg = err?.response?.data?.message || "Signup failed. Try again.";
         setError(msg);
-        console.error("Login error:", msg);
+        console.error("Signup error:", msg);
       }
   };
   const handleFileChange = (e) => {
