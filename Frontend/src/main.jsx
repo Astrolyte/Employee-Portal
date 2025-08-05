@@ -10,6 +10,7 @@ import MyPolls from './pages/Dashboard/MyPolls.jsx'
 import CreateIdea from './pages/Dashboard/CreateIdea/CreateIdea.jsx'
 import MyIdeas from './pages/Dashboard/MyIdeas.jsx'
 import Home from './pages/Dashboard/Home.jsx'
+import UserProvider from './context/UserContext.jsx'
 
 const Root = () => {
   const isAuthenticated = !!localStorage.getItem("token");
@@ -38,6 +39,8 @@ const router = createBrowserRouter(
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
+    <UserProvider>
     <RouterProvider router = {router} />
+    </UserProvider>
   </StrictMode>,
 )

@@ -1,12 +1,13 @@
 import React, { useContext } from 'react'
 import { SIDE_MENU_DATA } from '../../utils/data'
 import { useNavigate } from 'react-router-dom'
-
+import { UserContext } from '../../context/UserContext.jsx'
 function SideMenu({activeMenu}) {
-    const {clearUser} = useContext({UserContext})
+    const {clearUser} = useContext(UserContext)
     const navigate = useNavigate();
     const handleClick = (path) => {
         if(path === 'logout'){
+            handleLogout();
             return ;
         }
         navigate(path);
@@ -14,7 +15,7 @@ function SideMenu({activeMenu}) {
     const handleLogout = () => {
         localStorage.clear();
         clearUser();
-        navigate('/login');
+        navigate("/login");
     }
   return (
     <div className='w-64 h-[calc(100vh-61px)] bg-slate-50/80 border-r border-slate-200 backdrop-blur-md shadow-md p-5 sticky top-[61px] z-20'>
