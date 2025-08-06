@@ -1,16 +1,17 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import AuthLayout from '../../components/layout/AuthLayout.jsx'
 import {Link, useNavigate} from "react-router-dom"
 import AuthInput from '../../components/Input/AuthInput.jsx'
 import { validateEmail } from '../../utils/helper.js'
 import axiosInstance from '../../utils/axiosInstance.js'
 import { API_PATHS } from "../../utils/apiPaths.js"
+import { UserContext } from '../../context/UserContext.jsx'
 function LoginForm() {
 
   const [email,setEmail] = useState("")
   const [password,setPassword] = useState("")
   const [error,setError] = useState(null);
-
+  const { updateUser } = useContext(UserContext) 
   const navigate = useNavigate();
   const handleLogin = async(e) =>{
       e.preventDefault();
@@ -33,9 +34,10 @@ function LoginForm() {
         });
         if(res.status === 200){
           console.log("Login success:",res.data);
+          updateUser(res.data.data.user) 
           navigate("/dashboard");
         }
-      } catch (error) {
+      } catch (err) {
         const msg = err?.response?.data?.message || "Login failed. Try again.";
         setError(msg);
         console.error("Login error:", msg);
