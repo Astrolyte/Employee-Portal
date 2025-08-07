@@ -24,6 +24,31 @@ function CreatePoll() {
     }));
   };
 
+  //upload images and get the cloudinary url
+  const updateImageAndGetlink = async(imageOptions) => {
+    const optionPromises = imageOptions.map(async(imageOption)=>{
+      try{
+        const imgUploadRes = await uploadImage(imageOption.file);
+        return imgUploadRes.url || "";
+      }catch(error){
+        toast.error(`error uploading image: ${imageOption.file.name}`);
+        return "";
+      }
+    })
+  }
+  const getOptions = async () => {
+    switch(pollData.type){
+      case "single-choice":
+        return pollData.options;
+
+      case "image-based":
+        const options = await updateImageAndGetlink(pollData.imageOptions)
+        return options;
+
+      default:
+        return [];
+    }
+  }
   //Creating a new poll
   const handleCreatePoll = async () => {
     const {question ,type ,options , error} = pollData;
@@ -43,6 +68,8 @@ function CreatePoll() {
     }
     handleValueChange("error","");
     console.log("NO_ERR",{pollData});
+
+    const optionData = await getOptions();
   }
 
   return (

@@ -50,7 +50,7 @@ connectDB()
 //routes import
 
 import userRouter from "./src/routes/auth.routes.js"
-
+import pollRouter from "./src/routes/poll.routes.js"
 app.use("/api/v1/users",userRouter);
-
+app.use("/api/v1/poll",pollRouter);
 export {app,cloudinary}
