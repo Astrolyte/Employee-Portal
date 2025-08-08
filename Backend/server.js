@@ -51,6 +51,8 @@ connectDB()
 
 import userRouter from "./src/routes/auth.routes.js"
 import pollRouter from "./src/routes/poll.routes.js"
+import imageRouter from "./src/routes/image.routes.js"
 app.use("/api/v1/users",userRouter);
 app.use("/api/v1/poll",pollRouter);
+app.use("/api/v1/image-upload",imageRouter);
 export {app,cloudinary}

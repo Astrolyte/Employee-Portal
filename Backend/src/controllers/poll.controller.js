@@ -7,6 +7,7 @@ import { Poll } from "../models/poll.model.js";
 
 const createPoll = asyncHandler(async (req, res) => {
   const { question, type, options, creatorId } = req.body;
+  console.log("Received poll type:", type);
   if (!question || !type || !creatorId) {
     throw new ApiError(400, "Question,type and creatorId are required");
   }
@@ -42,8 +43,11 @@ const createPoll = asyncHandler(async (req, res) => {
           "Image-based poll must have atleast two options."
         );
       }
-      processedOptions = options.map((option) => ({ optionText: option }));
-      break;
+      processedOptions = options.map((url, index) => ({
+    optionText: `Image option ${index + 1}`,  // some placeholder or description if available
+    imageUrl: url,
+  }));
+  break;
     default:
       throw new ApiError(400, "Invalid poll type");
   }

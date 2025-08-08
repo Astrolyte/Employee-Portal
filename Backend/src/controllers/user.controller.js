@@ -61,30 +61,37 @@ const registerUser = asyncHandler(async (req, res) => {
     .status(201)
     .json(new ApiResponse(201, "User created successfully", createduser));
 });
+
+
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
     throw new ApiError(400, "email and password are required");
   }
+
   const user = await User.findOne({ email });
   if (!user) {
     throw new ApiError(400, "User Doesnt Exist , Retry");
   }
+
   const isValidPassword = await user.isPasswordCorrect(password);
   if (!isValidPassword) {
     throw new ApiError(400, "Invalid email or password");
   }
+
   const { accessToken, refreshToken } = await generateAccessandRefreshTokens(
     user._id
   );
+
   const loggedInUser = await User.findById(user._id).select(
     "-password -refreshToken"
   );
 
+  const totalPollsCreated = await Poll.countDocuments({
+    creator: loggedInUser._id,
+  });
 
-  const totalPollsCreated = await Poll.countDocuments({creator: loggedInUser._id});
-
-  const totalPollsVotes = await Poll.countDocuments({voters: user._id})
+  const totalPollsVotes = await Poll.countDocuments({ voters: user._id });
 
   //TO-DO -> Create total ideas created and voted
   const options = {
@@ -99,13 +106,13 @@ const loginUser = asyncHandler(async (req, res) => {
       new ApiResponse(
         200,
         {
-          user:{
+          user: {
             ...loggedInUser.toObject(),
             totalPollsCreated,
             totalPollsVotes,
             totalIdeasCreated: 0,
             totalIdeasVotes: 0,
-          }
+          },
         },
         "User logged in successfully"
       )
@@ -117,9 +124,9 @@ const getUserInfo = asyncHandler(async (req, res) => {
   if (!user) {
     throw new ApiError(404, "User not found");
   }
-    const totalPollsCreated = await Poll.countDocuments({creator: user._id});
+  const totalPollsCreated = await Poll.countDocuments({ creator: user._id });
 
-  const totalPollsVotes = await Poll.countDocuments({voters: user._id})
+  const totalPollsVotes = await Poll.countDocuments({ voters: user._id });
 
   //TO-DO -> Create total ideas created and voted
   const userInfo = {
