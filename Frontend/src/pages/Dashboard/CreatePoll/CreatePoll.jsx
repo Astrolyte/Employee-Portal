@@ -44,13 +44,15 @@ function CreatePoll() {
     const optionPromises = imageOptions.map(async(imageOption)=>{
       try{
         const imgUploadRes = await uploadImage(imageOption.file);
-        return imgUploadRes.url || "";
+    console.log("Upload response for", imageOption.file.name, ":", imgUploadRes);
+        return imgUploadRes.message.url || "";
       }catch(error){
         toast.error(`error uploading image: ${imageOption.file.name}`);
         return "";
       }
     })
     const optionArr = await Promise.all(optionPromises);
+    console.log("final output",optionArr);
     return optionArr;
   }
   const getOptions = async () => {

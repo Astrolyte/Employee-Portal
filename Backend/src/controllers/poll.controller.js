@@ -134,8 +134,8 @@ const getAllPolls = asyncHandler(async (req, res) => {
     })
     .sort((a, b) => b.count - a.count);
 
-  return res.status(201).json(
-    new ApiResponse(201, "Poll data fetched successfully", {
+  return res.status(200).json(
+    new ApiResponse(200, "Poll data fetched successfully", {
       polls: updatedPolls,
       currentPage: pageNumber,
       totalPages: Math.ceil(totalPolls / pageSize),

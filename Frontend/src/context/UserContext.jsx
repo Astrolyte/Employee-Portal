@@ -19,6 +19,14 @@ const UserProvider = ({children}) => {
             [key]: value,
         }))
     }
+    //update totalPollsVoyes count locally
+    const onUserVoted = () => {
+        const totalPollsVotes = user.totalPollsVotes || 0;
+        updateUserStats(
+            "totalPollsVotes",totalPollsVotes + 1
+        )
+    }
+
     //update totalpollscreated count locally
     const onPollCreateOrDelete = (type = "create") => {
         const totalPollsCreated = user?.totalPollsCreated || 0;
@@ -34,7 +42,8 @@ const UserProvider = ({children}) => {
             user,
             updateUser,
             clearUser,
-            onPollCreateOrDelete
+            onPollCreateOrDelete,
+            onUserVoted
             }}
             >
                 {children}
