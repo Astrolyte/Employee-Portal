@@ -141,4 +141,25 @@ const getUserInfo = asyncHandler(async (req, res) => {
     .status(201)
     .json(new ApiResponse(201, "User fetched successfully", userInfo));
 });
-export { registerUser, loginUser, getUserInfo };
+const logoutUser = asyncHandler(async (req, res) => {
+  // Remove the refresh token from the user in DB
+  try {
+    // Clear cookies (both access and refresh tokens if used)
+    res.clearCookie("accessToken", {
+      httpOnly: true,
+      sameSite: "strict"
+    });
+
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      sameSite: "strict"
+    });
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, {}, "User logged out successfully"));
+  } catch (error) {
+    return res.status(500).json({ message: "Something went wrong" });
+  }
+});
+export { registerUser, loginUser, getUserInfo,logoutUser };

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useState } from "react";
 import AuthLayout from "../../components/layout/AuthLayout.jsx";
 import AuthInput from "../../components/Input/AuthInput.jsx";
@@ -6,6 +6,7 @@ import { validateEmail, validatePassword } from "../../utils/helper.js";
 import axiosInstance from "../../utils/axiosInstance.js";
 import { API_PATHS } from "../../utils/apiPaths.js"
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../../context/UserContext.jsx";
 function SignupForm() {
   const [name, setName] = useState("");
   const [profilePhoto, setProfilePhoto] = useState("");
@@ -14,6 +15,8 @@ function SignupForm() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState(false);
+
+  const { setUser, clearUser } = useContext(UserContext);
 
   const navigate = useNavigate();
   const handleSignup = async(e) => {
@@ -42,6 +45,10 @@ function SignupForm() {
 
     //api call for Signup
     try {
+
+        clearUser();
+        localStorage.clear();
+
         const formdata = new FormData();
         formdata.append('Name', name);
         formdata.append('DOB', dateOfBirth);
@@ -60,7 +67,10 @@ function SignupForm() {
         })
         if(res.status == 201){
           console.log("Signup Sucess:",res.data);
-          navigate("/dashboard");
+          if (res.data && res.data.user) {
+            setUser(res.data.user);
+          }
+          navigate("/login");
         }
       } catch (err) {
         const msg = err?.response?.data?.message || "Signup failed. Try again.";

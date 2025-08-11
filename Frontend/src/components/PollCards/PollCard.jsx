@@ -6,7 +6,7 @@ import PollContent from "./PollContent";
 import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/apiPaths";
 import toast from "react-hot-toast";
-import PollingResultContent from "./PollingResultContent";
+import PollingResultContent from "./PollingResultContent.jsx";
 const PollCard = ({
   pollId,
   question,

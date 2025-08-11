@@ -33,3 +33,17 @@ export const POLL_TYPE = [
     {id:"04",label:"Image Based",value: "image-based"},
     {id:"05",label:"Open Ended",value: "open-ended"}
 ]
+export const PRIORITY_LEVELS = [
+  { label: "Low", value: "low" },
+  { label: "Medium", value: "medium" },
+  { label: "High", value: "high" },
+];
+
+export const IDEA_STATUSES = [
+  { label: "All", value: "" },
+  { label: "Pending", value: "pending" },
+  { label: "Under Review", value: "under-review" },
+  { label: "Approved", value: "approved" },
+  { label: "Rejected", value: "rejected" },
+  { label: "Implemented", value: "implemented" },
+];

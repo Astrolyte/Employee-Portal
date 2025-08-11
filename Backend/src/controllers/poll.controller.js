@@ -82,7 +82,7 @@ const getAllPolls = asyncHandler(async (req, res) => {
     .populate("creator", "Name email avatar")
     .populate({
       path: "responses.voterId",
-      select: "Name Avatar",
+      select: "Name avatar",
     })
     .skip(skip)
     .limit(pageSize)

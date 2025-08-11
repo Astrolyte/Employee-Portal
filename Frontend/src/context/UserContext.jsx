@@ -35,7 +35,23 @@ const UserProvider = ({children}) => {
             type == "create" ? totalPollsCreated + 1 : totalPollsCreated - 1
         );
     }
+    //update totalIdeasCreated count locally
+    const onIdeaCreateOrDelete = (type = "create") => {
+        const totalIdeasCreated = user?.totalIdeasCreated || 0;
+        updateUserStats(
+            "totalIdeasCreated",
+            type == "create" ? totalIdeasCreated + 1 : totalIdeasCreated - 1
+        );
+    }
 
+    //update totalIdeasLiked count locally (when user likes/unlikes an idea)
+    const onUserLikedIdea = (type = "like") => {
+        const totalIdeasLiked = user?.totalIdeasLiked || 0;
+        updateUserStats(
+            "totalIdeasLiked",
+            type == "like" ? totalIdeasLiked + 1 : totalIdeasLiked - 1
+        );
+    }
     return (
         <UserContext.Provider
         value={{
@@ -43,7 +59,9 @@ const UserProvider = ({children}) => {
             updateUser,
             clearUser,
             onPollCreateOrDelete,
-            onUserVoted
+            onUserVoted,
+            onIdeaCreateOrDelete,
+            onUserLikedIdea
             }}
             >
                 {children}
