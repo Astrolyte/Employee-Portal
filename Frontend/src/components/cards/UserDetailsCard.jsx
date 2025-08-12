@@ -13,7 +13,7 @@ function UserDetailsCard({
   totalPollsVotes,
   totalPollsCreated,
   totalIdeasCreated,
-  totalIdeasVotes,
+  totalIdeasVoted,
 }) {
   return (
     <div className="bg-slate-100/50 rounded-lg mt-16 overflow-hidden">
@@ -39,7 +39,7 @@ function UserDetailsCard({
             <StatsInfo label ="Polls Created" value={totalPollsCreated || 0} />
             <StatsInfo label ="Polls Voted" value={totalPollsVotes || 0} />
             <StatsInfo label ="Ideas Created" value={totalIdeasCreated || 0} />
-            <StatsInfo label ="Ideas Voted" value={totalIdeasVotes || 0} />
+            <StatsInfo label ="Ideas Voted" value={totalIdeasVoted || 0} />
 
         </div>
       </div>

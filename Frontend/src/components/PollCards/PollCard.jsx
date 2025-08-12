@@ -87,10 +87,25 @@ const PollCard = ({
       console.error(error.response?.data?.message || "Error Submitting Vote");
     }
   };
+
+  const closePoll = async () => {
+    try {
+      const response = await axiosInstance.post(API_PATHS.POLLS.CLOSE(pollId));
+
+      if(response.data){
+        setPollClosed(true);
+        toast.success(response.data?.message || "Poll Clsoed Successfully");
+      }
+
+    }catch(error){
+      toast.error("Something went wrong. Please try again.");
+      console.log("Something went wrong. Please try again",error);
+    }
+  }
   return (
     !polldeleted && (
-      <div className="bg-slate-100/50 my-5 p-5 rounded-lg border border-slate-100 mx-auto">
-        <div className="flex items-center justify-between">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-4 mx-4">
+        <div className="flex items-start justify-between mb-4">
           <UserProfileInfo
             imgUrl={creatorProfileImg}
             fullname={creatorName}
@@ -104,13 +119,13 @@ const PollCard = ({
             onVoteSubmit={handleVoteSubmit}
             isMyPoll={isMyPoll}
             pollClosed={pollclosed}
-            onClosePoll={() => {}}
+            onClosePoll={closePoll}
             onDelete={() => {}}
           />
         </div>
-        <div className="ml-14 mt-3">
-          <p className="text-[15px] text-black leading-8"> {question}</p>
-          <div className="mt-4">
+        <div className="mb-4">
+          <p className="text-lg font-semibold text-gray-900 mb-2"> {question}</p>
+          <div className="text-gray-700 text-sm leading-relaxed">
             {isVoteComplete || isPollClosed ? (
              <PollingResultContent 
              type ={type}

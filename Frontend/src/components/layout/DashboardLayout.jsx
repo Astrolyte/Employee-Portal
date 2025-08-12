@@ -6,7 +6,7 @@ import { UserContext } from '../../context/UserContext.jsx'
 
 function DashboardLayout({ children, activeMenu }) {
   const { user } = useContext(UserContext);
-
+  console.log(user);
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar activeMenu={activeMenu} />

@@ -8,7 +8,7 @@ import { Idea } from "../models/idea.model.js";
 const createIdea = asyncHandler(async (req, res) => {
   const { title, description, priority, isAnonymous, attachments } = req.body;
   const creatorId = req.user._id;
-
+  console.log(attachments.length);
   if (!title || !description) {
     throw new ApiError(400, "Title and description are required");
   }
@@ -40,12 +40,11 @@ const createIdea = asyncHandler(async (req, res) => {
 });
 
 const getAllIdeas = asyncHandler(async (req, res) => {
-  const { status, priority, creatorId, page = 1, limit = 10, archived = false } = req.query;
+  const { priority, creatorId, page = 1, limit = 10, archived = false } = req.query;
 
-  const filter = { archived: archived === 'true' };
+  const filter = {};
   const userId = req.user._id;
 
-  if (status) filter.status = status;
   if (priority) filter.priority = priority;
   if (creatorId) filter.creator = creatorId;
 
@@ -81,7 +80,7 @@ const getAllIdeas = asyncHandler(async (req, res) => {
     { $match: { archived: archived === 'true' } },
     {
       $group: {
-        _id: "$status",
+        _id: "$priority",
         count: { $sum: 1 },
       },
     },
@@ -94,32 +93,13 @@ const getAllIdeas = asyncHandler(async (req, res) => {
     },
   ]);
 
-  const allStatuses = [
-    { status: "pending", label: "Pending" },
-    { status: "under-review", label: "Under Review" },
-    { status: "approved", label: "Approved" },
-    { status: "rejected", label: "Rejected" },
-    { status: "implemented", label: "Implemented" },
-  ];
-
-  const statsWithDefaults = allStatuses
-    .map((ideaStatus) => {
-      const stat = stats.find((item) => item.status === ideaStatus.status);
-      return {
-        label: ideaStatus.label,
-        status: ideaStatus.status,
-        count: stat ? stat.count : 0,
-      };
-    })
-    .sort((a, b) => b.count - a.count);
-
   return res.status(200).json(
     new ApiResponse(200, "Ideas data fetched successfully", {
       ideas: updatedIdeas,
       currentPage: pageNumber,
       totalPages: Math.ceil(totalIdeas / pageSize),
       totalIdeas,
-      stats: statsWithDefaults,
+      stats: stats,
     })
   );
 });
