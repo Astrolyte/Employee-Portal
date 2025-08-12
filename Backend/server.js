@@ -24,7 +24,7 @@ import cookieParser from "cookie-parser"
 const app = express()
 app.use(
     cors({
-        origin: process.env.CLIENT_URL || "http://localhost:5173" || "*" || "https://your-vercel-frontend.vercel.app",
+        origin: process.env.CLIENT_URL,
         methods: ["GET", "POST","PUT","DELETE"],
         allowedHeaders: ["Content-Type","Authorization"],
         credentials: true
