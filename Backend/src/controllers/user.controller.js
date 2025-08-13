@@ -189,18 +189,18 @@ const logoutUser = asyncHandler(async (req, res) => {
   sameSite: "none",
     };
 
-    const { accessToken, newrefreshToken } =
+    const { accessToken, refreshToken } =
       await generateAccessandRefreshTokens(user._id);
     return res
       .status(200)
       .cookie("accessToken", accessToken, options)
-      .cookie("refreshToken", newrefreshToken, options)
+      .cookie("refreshToken", refreshToken, options)
       .json(
         new ApiResponse(
           200,
           {
             accessToken,
-            refreshToken: newrefreshToken,
+            refreshToken: refreshToken,
           },
           "Access Token Refreshed"
         )
