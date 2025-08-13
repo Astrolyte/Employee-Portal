@@ -101,6 +101,9 @@ const loginUser = asyncHandler(async (req, res) => {
     httpOnly: true,
     secure: true,
   sameSite: "none",
+  domain: process.env.COOKIE_DOMAIN || '.onrender.com',
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+    path: '/'
   };
   return res
     .status(200)
@@ -149,23 +152,18 @@ const getUserInfo = asyncHandler(async (req, res) => {
 });
 const logoutUser = asyncHandler(async (req, res) => {
   // Remove the refresh token from the user in DB
-  try {
-    // Clear cookies (both access and refresh tokens if used)
-    res.clearCookie("accessToken", {
-      httpOnly: true,
-      sameSite: "none"
-    });
+    const options = {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'none',
+    domain: process.env.COOKIE_DOMAIN || '.onrender.com',
+    path: '/',
+  };
 
-    res.clearCookie("refreshToken", {
-      httpOnly: true,
-      sameSite: "none"
-    });
-
-    return res
-      .status(200)
-      .json(new ApiResponse(200, {}, "User logged out successfully"));
-  } catch (error) {
-    return res.status(500).json({ message: "Something went wrong" });
-  }
-});
+  res
+    .clearCookie('accessToken', options)
+    .clearCookie('refreshToken', options)
+    .status(200)
+    .json(new ApiResponse(200, {}, "User logged out successfully"));
+  });
 export { registerUser, loginUser, getUserInfo,logoutUser };
