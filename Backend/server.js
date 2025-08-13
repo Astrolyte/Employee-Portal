@@ -19,6 +19,12 @@ import cors from "cors"
 import {connectDB} from "./src/config/db.js"
 import cookieParser from "cookie-parser"
 
+//routes import
+
+import userRouter from "./src/routes/auth.routes.js"
+import pollRouter from "./src/routes/poll.routes.js"
+import imageRouter from "./src/routes/image.routes.js"
+import ideaRouter from "./src/routes/idea.routes.js"
 //EXPRESS ---------->
 
 const app = express()
@@ -47,12 +53,6 @@ connectDB()
 
 
 
-//routes import
-
-import userRouter from "./src/routes/auth.routes.js"
-import pollRouter from "./src/routes/poll.routes.js"
-import imageRouter from "./src/routes/image.routes.js"
-import ideaRouter from "./src/routes/idea.routes.js"
 app.use("/api/v1/users",userRouter);
 app.use("/api/v1/poll",pollRouter);
 app.use("/api/v1/image-upload",imageRouter);
