@@ -39,7 +39,7 @@ function UserDetailsCard({
             <StatsInfo label ="Polls Created" value={totalPollsCreated || 0} />
             <StatsInfo label ="Polls Voted" value={totalPollsVotes || 0} />
             <StatsInfo label ="Ideas Created" value={totalIdeasCreated || 0} />
-            <StatsInfo label ="Ideas Voted" value={totalIdeasVoted || 0} />
+            <StatsInfo label ="Ideas Voted" value={totalIdeasVoted} />
 
         </div>
       </div>

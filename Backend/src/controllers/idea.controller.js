@@ -186,9 +186,16 @@ const likeIdea = asyncHandler(async (req, res) => {
   idea.likes.push(userId);
   await idea.save();
 
+  await idea.populate("likes","Name avatar");
+
+  const userHasLiked = idea.likes.some(likeUserId => likeUserId._id.equals(userId));
+
   return res
     .status(200)
-    .json(new ApiResponse(200, "Idea liked successfully", idea));
+    .json(new ApiResponse(200, "Idea liked successfully", {
+      ...idea.toObject(),
+      userHasLiked,
+    }));
 });
 
 const unlikeIdea = asyncHandler(async (req, res) => {
@@ -196,28 +203,30 @@ const unlikeIdea = asyncHandler(async (req, res) => {
   const userId = req.user._id;
 
   const idea = await Idea.findById(id);
+  if (!idea) throw new ApiError(404, "Idea not found");
+  if (!idea.likes.includes(userId)) throw new ApiError(400, "User hasn't liked this idea");
 
-  if (!idea) {
-    throw new ApiError(404, "Idea not found");
-  }
-
-  if (!idea.likes.includes(userId)) {
-    throw new ApiError(400, "User hasn't liked this idea");
-  }
-
-  idea.likes = idea.likes.filter((likeUserId) => !likeUserId.equals(userId));
+  idea.likes = idea.likes.filter(likeUserId => !likeUserId.equals(userId));
   await idea.save();
+
+  // Populate likes for frontend display
+  await idea.populate("likes", "Name avatar");
+
+  // Add `userHasLiked` flag
+  const userHasLiked = idea.likes.some(likeUserId => likeUserId._id.equals(userId));
 
   return res
     .status(200)
-    .json(new ApiResponse(200, "Idea unliked successfully", idea));
+    .json(new ApiResponse(200, "Idea unliked successfully", {
+      ...idea.toObject(),
+      userHasLiked,
+    }));
 });
-
 const addComment = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { text } = req.body;
   const userId = req.user._id;
-
+  const user = await User.findById(userId).select('_id Name avatar');
   if (!text) {
     throw new ApiError(400, "Comment text is required");
   }
@@ -233,7 +242,11 @@ const addComment = asyncHandler(async (req, res) => {
   }
 
   idea.comments.push({
-    user: userId,
+    user: {
+      _id: user._id,
+      Name: user.Name,
+      avatar: user.avatar
+    },
     text: text,
   });
 
@@ -261,7 +274,7 @@ const updateIdeaStatus = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Idea doesn't exist, try again");
   }
 
-  // Only creator can update their own idea status (or add admin check here)
+  // Only creator can update their own idea status
   if (idea.creator.toString() !== userId.toString()) {
     throw new ApiError(403, "You're not authorized to update this idea's status");
   }

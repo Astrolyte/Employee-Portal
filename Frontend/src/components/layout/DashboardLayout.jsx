@@ -6,7 +6,7 @@ import { UserContext } from '../../context/UserContext.jsx'
 
 function DashboardLayout({ children, activeMenu }) {
   const { user } = useContext(UserContext);
-  console.log(user);
+  // console.log("This is the user",user);
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar activeMenu={activeMenu} />
@@ -35,7 +35,7 @@ function DashboardLayout({ children, activeMenu }) {
                 totalPollsVotes={user?.totalPollsVotes}
                 totalPollsCreated={user?.totalPollsCreated}
                 totalIdeasCreated={user?.totalIdeasCreated}
-                totalIdeasVotes={user?.totalIdeasVotes}
+                totalIdeasVoted={user?.totalIdeasVoted }
               />
             </div>
           </div>

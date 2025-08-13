@@ -18,9 +18,11 @@ const UserProvider = ({children}) => {
             ...prev,
             [key]: value,
         }))
+        console.log(user);
     }
     //update totalPollsVoyes count locally
     const onUserVoted = () => {
+        
         const totalPollsVotes = user.totalPollsVotes || 0;
         updateUserStats(
             "totalPollsVotes",totalPollsVotes + 1
@@ -45,12 +47,17 @@ const UserProvider = ({children}) => {
     }
 
     //update totalIdeasLiked count locally (when user likes/unlikes an idea)
-    const onUserLikedIdea = (type = "like") => {
-        const totalIdeasLiked = user?.totalIdeasLiked || 0;
-        updateUserStats(
-            "totalIdeasLiked",
-            type == "like" ? totalIdeasLiked + 1 : totalIdeasLiked - 1
-        );
+    const onUserLikedIdea = () => {
+        const totalIdeasVotes = user?.totalIdeasVoted || 0;
+        // updateUserStats(
+        //     "totalIdeasVoted",
+        //     type == "like" ? totalIdeasVoted + 1 : totalIdeasVoted - 1
+        // );
+        updateUserStats("totalIdeasVoted",totalIdeasVotes + 1);
+    }
+    const onUnlikeIdea = () => {
+        const totalIdeasVotes = user?.totalIdeasVoted || 0;
+        updateUserStats("totalIdeasVoted",Math.max(totalIdeasVotes - 1,0));
     }
     return (
         <UserContext.Provider
@@ -61,7 +68,8 @@ const UserProvider = ({children}) => {
             onPollCreateOrDelete,
             onUserVoted,
             onIdeaCreateOrDelete,
-            onUserLikedIdea
+            onUserLikedIdea,
+            onUnlikeIdea
             }}
             >
                 {children}

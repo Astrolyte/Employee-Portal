@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { FaHeart, FaRegHeart, FaPaperclip, FaCommentAlt } from "react-icons/fa";
 import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/apiPaths";
 import toast from "react-hot-toast";
+import { UserContext } from "../../context/UserContext";
 
 function IdeaCard({
   ideaId,
@@ -20,46 +21,75 @@ function IdeaCard({
   isAnonymous,
   createdAt,
 }) {
+  const { user, onUserLikedIdea, onUnlikeIdea } = useContext(UserContext);
   const [hasLiked, setHasLiked] = useState(userHasLiked);
   const [likeCount, setLikeCount] = useState(likes.length);
   const [showComments, setShowComments] = useState(false);
   const [newComment, setNewComment] = useState("");
   const [ideaComments, setIdeaComments] = useState(comments);
+  const [loading, setLoading] = useState(false);
+
+  const isMyIdea = user?.email === creatorEmail;
 
   const handleLike = async () => {
+    if (loading) return;
+    
+    setLoading(true);
     try {
       const endpoint = hasLiked 
         ? `${API_PATHS.IDEAS.UNLIKE}/${ideaId}/unlike`
         : `${API_PATHS.IDEAS.LIKE}/${ideaId}/like`;
       
-      await axiosInstance.post(endpoint);
+      const res = await axiosInstance.post(endpoint);
       
-      setHasLiked(!hasLiked);
-      setLikeCount(prev => hasLiked ? prev - 1 : prev + 1);
+    console.log("Like API Response:", res.data);
+    setLikeCount(res.data.message.likes.length);
+      
+    setHasLiked(res.data.message.userHasLiked);
+      // Update user stats in context
+      if(res.data.message.userHasLiked){
+        onUserLikedIdea();
+      }else{
+        onUnlikeIdea();
+      }
+      
+      toast.success(hasLiked ? "Idea unliked" : "Idea liked");
     } catch (error) {
       console.error("Error toggling like:", error);
       toast.error("Failed to update like");
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleAddComment = async () => {
-    if (!newComment.trim()) return;
+    if (!newComment.trim() || loading) return;
 
+    setLoading(true);
     try {
       const response = await axiosInstance.post(
         `${API_PATHS.IDEAS.ADD_COMMENT}/${ideaId}/comment`,
         { text: newComment }
       );
-      
-      setIdeaComments(response.data.data.comments);
+      const transformedComments = response.data.message.comments.map(comment => ({
+      ...comment,
+      user: {
+        _id: comment.user, // This is the user ID string from backend
+        Name: user.Name,   // Use current user's name
+        avatar: user.avatar // Use current user's avatar
+      }
+    }));
+    setIdeaComments(transformedComments);
+    console.log(transformedComments);
       setNewComment("");
       toast.success("Comment added successfully");
     } catch (error) {
       console.error("Error adding comment:", error);
       toast.error("Failed to add comment");
+    } finally {
+      setLoading(false);
     }
   };
-
 
   const getPriorityColor = (priority) => {
     switch (priority) {
@@ -72,7 +102,7 @@ function IdeaCard({
 
   const formatTime = (date) => {
     const d = new Date(date);
-    return d.toLocaleString(); // Basic readable date and time
+    return d.toLocaleString();
   };
 
   return (
@@ -105,10 +135,15 @@ function IdeaCard({
             </div>
           )}
         </div>
-        <div className="flex space-x-2">
+        <div className="flex items-center gap-2">
           <span className={`px-2 py-1 text-xs font-medium rounded-full ${getPriorityColor(priority)}`}>
             {priority}
           </span>
+          {isMyIdea && (
+            <div className="text-[11px] font-medium text-slate-100 bg-green-600 px-3 py-1 rounded-md">
+              My Idea
+            </div>
+          )}
         </div>
       </div>
 
@@ -146,9 +181,12 @@ function IdeaCard({
         <div className="flex items-center space-x-4">
           <button
             onClick={handleLike}
-            className={`flex items-center space-x-1 text-sm ${
-              hasLiked ? "text-red-500" : "text-gray-500 hover:text-red-500"
-            }`}
+            disabled={loading}
+            className={`flex items-center space-x-1 text-sm transition-colors ${
+              hasLiked 
+                ? "text-red-500" 
+                : "text-gray-500 hover:text-red-500"
+            } ${loading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
           >
             {hasLiked ? <FaHeart /> : <FaRegHeart />}
             <span>{likeCount}</span>
@@ -156,7 +194,7 @@ function IdeaCard({
           
           <button
             onClick={() => setShowComments(!showComments)}
-            className="flex items-center space-x-1 text-sm text-gray-500 hover:text-blue-500"
+            className="flex items-center space-x-1 text-sm text-gray-500 hover:text-blue-500 transition-colors"
           >
             <FaCommentAlt />
             <span>{ideaComments.length}</span>
@@ -201,12 +239,14 @@ function IdeaCard({
               onChange={(e) => setNewComment(e.target.value)}
               className="flex-1 text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               onKeyPress={(e) => e.key === 'Enter' && handleAddComment()}
+              disabled={loading}
             />
             <button
               onClick={handleAddComment}
-              className="px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600"
+              disabled={loading || !newComment.trim()}
+              className="px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              Post
+              {loading ? "Posting..." : "Post"}
             </button>
           </div>
         </div>

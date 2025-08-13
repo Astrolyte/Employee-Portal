@@ -7,7 +7,7 @@ const EmptyCard = ({message,btnText,onClick}) => {
             {message}
         </p>
         {btnText && (
-            <button className='flex items-center gap-1 text-xs font-medium rounded-md bg-blue-500 text-white hover:bg-sky-200/60 hover:text-blue-500 text-nowrap px-6 py-2 mt-7'>
+            <button className='flex items-center gap-1 text-xs font-medium rounded-md bg-blue-500 text-white hover:bg-sky-200/60 hover:text-blue-500 text-nowrap px-6 py-2 mt-7' onClick={onClick}>
                 {btnText}
             </button> 
         )}

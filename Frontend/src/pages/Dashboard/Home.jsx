@@ -64,7 +64,7 @@ function Home() {
 
       // Process poll response
       if (pollResponse && pollResponse.status === 'fulfilled' && pollResponse.value) {
-        console.log("Poll API response:", pollResponse.value.data.message);
+        console.log("Poll API response:", pollResponse);
         polls = pollResponse.value.data.message?.polls?.map(poll => ({
           ...poll,
           _type: 'poll'
@@ -79,7 +79,7 @@ function Home() {
 
       // Process idea response
       if (ideaResponse && ideaResponse.status === 'fulfilled' && ideaResponse.value) {
-        console.log("Idea API response:", ideaResponse.value.data.message);
+        console.log("Idea API response:", ideaResponse);
         ideas = ideaResponse.value.data.message?.ideas?.map(idea => ({
           ...idea,
           _type: 'idea'

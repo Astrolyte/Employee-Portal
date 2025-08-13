@@ -4,6 +4,7 @@ import { User } from "../models/user.models.js";
 import { uploadOnCloudinary } from "../utils/uploadOnCloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { Poll } from "../models/poll.model.js";
+import { Idea } from "../models/idea.model.js";
 
 const generateAccessandRefreshTokens = async (UserId) => {
   try {
@@ -94,6 +95,8 @@ const loginUser = asyncHandler(async (req, res) => {
   const totalPollsVotes = await Poll.countDocuments({ voters: user._id });
 
   //TO-DO -> Create total ideas created and voted
+  const totalIdeasVoted = await Idea.countDocuments({ likes: user._id });
+  const totalIdeasCreated = await Idea.countDocuments({ creator: user._id });
   const options = {
     httpOnly: true,
     secure: true,
@@ -111,8 +114,8 @@ const loginUser = asyncHandler(async (req, res) => {
             ...loggedInUser.toObject(),
             totalPollsCreated,
             totalPollsVotes,
-            totalIdeasCreated: 0,
-            totalIdeasVotes: 0,
+            totalIdeasCreated,
+            totalIdeasVoted,
           },
         },
         "User logged in successfully"
@@ -128,14 +131,16 @@ const getUserInfo = asyncHandler(async (req, res) => {
   const totalPollsCreated = await Poll.countDocuments({ creator: user._id });
 
   const totalPollsVotes = await Poll.countDocuments({ voters: user._id });
-
+  
+  const totalIdeasVoted = await Idea.countDocuments({ likes: user._id });
+  const totalIdeasCreated = await Idea.countDocuments({ creator: user._id });
   //TO-DO -> Create total ideas created and voted
   const userInfo = {
     ...user.toObject(),
     totalPollsCreated,
     totalPollsVotes,
-    totalIdeasCreated: 0,
-    totalIdeasVoted: 0,
+    totalIdeasCreated,
+    totalIdeasVoted,
   };
 
   return res
@@ -148,12 +153,12 @@ const logoutUser = asyncHandler(async (req, res) => {
     // Clear cookies (both access and refresh tokens if used)
     res.clearCookie("accessToken", {
       httpOnly: true,
-      sameSite: "strict"
+      sameSite: "none"
     });
 
     res.clearCookie("refreshToken", {
       httpOnly: true,
-      sameSite: "strict"
+      sameSite: "none"
     });
 
     return res
