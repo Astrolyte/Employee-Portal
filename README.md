@@ -7,7 +7,7 @@ In large, geographically dispersed organizations, traditional communication chan
 ✨ Key Features
 🔐 Secure Authentication: JWT-based authentication and authorization with password hashing (bcrypt).
 
-🌐 Dynamic Real-Time Feed: An infinite scrolling home feed that updates live with new polls and ideas using WebSockets.
+🌐 Dynamic Infinite Feed: An infinite scrolling home feed that updates  with new polls and ideas.
 
 📊 Diverse Poll Types: Create and vote on multiple poll formats, including Yes/No, Text-based, Picture-based, and Rating scales.
 
